@@ -55,7 +55,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   private func showAnswerResult(isCorrect: Bool) {
     imageView.layer.masksToBounds = true
     imageView.layer.borderWidth = 8
-    imageView.layer.borderColor =
+    imageView.layer.borderColor = isCorrect ?
       UIColor.ypxGreen.cgColor : UIColor.ypxRed.cgColor
 
     if isCorrect {
@@ -112,7 +112,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
     let viewModel = convert(model: question)
     DispatchQueue.main.async { [weak self] in
       self?.show(quiz: viewModel)
-      buttonsEnabled = true
+      self?.buttonsEnabled = true
     }
   }
   
