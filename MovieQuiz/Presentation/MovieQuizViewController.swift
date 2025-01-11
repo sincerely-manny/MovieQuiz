@@ -9,9 +9,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   private var currentQuestion: QuizQuestion?
 
   private var buttonsEnabled = true
-  
+
   private var questionFactory: QuestionFactoryProtocol?
   private var alertPresenter: AlertPresenterProtocol?
+  private let statisticService: StatisticServiceProtocol = StatisticService()
 
   @IBOutlet private var imageView: UIImageView!
   @IBOutlet private var textLabel: UILabel!
@@ -55,8 +56,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   private func showAnswerResult(isCorrect: Bool) {
     imageView.layer.masksToBounds = true
     imageView.layer.borderWidth = 8
-    imageView.layer.borderColor = isCorrect ?
-      UIColor.ypxGreen.cgColor : UIColor.ypxRed.cgColor
+    imageView.layer.borderColor =
+      isCorrect ? UIColor.ypxGreen.cgColor : UIColor.ypxRed.cgColor
 
     if isCorrect {
       correctAnswers += 1
@@ -91,9 +92,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
 
   private func showNextQuestionOrResults() {
     if currentQuestionIndex == questionsAmount - 1 {
+      statisticService.store(correct: correctAnswers, total: questionsAmount)
+
       let result = QuizResultsViewModel(
         title: "Этот раунд окончен!",
-        text: "Ваш результат \(correctAnswers)/\(questionsAmount)",
+        text: """
+          Количество сыгранных квизов: \(statisticService.gamesCount) 
+          Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))
+          Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
+          """,
         buttonText: "Сыграть ещё раз"
       )
       show(quiz: result)
@@ -115,7 +122,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
       self?.buttonsEnabled = true
     }
   }
-  
+
   // MARK: - AlertPresenterDelegate
 
   func didFinishPresentingAlert() {
