@@ -75,6 +75,7 @@ final class MovieQuizViewController: UIViewController {
   override func viewDidLoad() {
     currentQuestionIndex = -1
     showNextQuestionOrResults()
+    imageView.layer.masksToBounds = true
     super.viewDidLoad()
   }
 
@@ -113,7 +114,6 @@ final class MovieQuizViewController: UIViewController {
 
   private func showAnswerResult(isCorrect: Bool) {
     buttonsEnabled = false
-    imageView.layer.masksToBounds = true
     imageView.layer.borderWidth = 8
     imageView.layer.borderColor =
       isCorrect ? UIColor.ypxGreen.cgColor : UIColor.ypxRed.cgColor
