@@ -7,6 +7,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   private var correctAnswers = 0
   private let questionsAmount: Int = 10
   private var currentQuestion: QuizQuestion?
+
+  private var buttonsEnabled = true
   
   private var questionFactory: QuestionFactoryProtocol?
   private var alertPresenter: AlertPresenterProtocol?
@@ -21,6 +23,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
     questionFactory = QuestionFactory(delegate: self)
     alertPresenter = AlertPresenter(delegate: self)
     currentQuestionIndex = -1
+    imageView.layer.masksToBounds = true
     showNextQuestionOrResults()
   }
 
@@ -53,7 +56,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
     imageView.layer.masksToBounds = true
     imageView.layer.borderWidth = 8
     imageView.layer.borderColor =
-      isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+      UIColor.ypxGreen.cgColor : UIColor.ypxRed.cgColor
 
     if isCorrect {
       correctAnswers += 1
@@ -67,6 +70,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   }
 
   @IBAction private func yesButtonClicked(_ sender: UIButton) {
+    guard buttonsEnabled == true else { return }
+    buttonsEnabled = false
     guard let currentQuestion = currentQuestion else {
       return
     }
@@ -75,6 +80,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
   }
 
   @IBAction private func noButtonClicked(_ sender: UIButton) {
+    guard buttonsEnabled == true else { return }
+    buttonsEnabled = false
     guard let currentQuestion = currentQuestion else {
       return
     }
@@ -105,6 +112,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
     let viewModel = convert(model: question)
     DispatchQueue.main.async { [weak self] in
       self?.show(quiz: viewModel)
+      buttonsEnabled = true
     }
   }
   
@@ -114,6 +122,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate,
     self.currentQuestionIndex = -1
     self.correctAnswers = 0
     self.showNextQuestionOrResults()
+    buttonsEnabled = true
   }
 
 }
