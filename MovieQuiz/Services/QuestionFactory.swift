@@ -27,6 +27,11 @@ final class QuestionFactory: QuestionFactoryProtocol {
   }
 
   func requestNextQuestion() {
+    if movies.isEmpty {
+      loadData()
+      return
+    }
+    
     DispatchQueue.global().async { [weak self] in
       guard let self = self else { return }
       let index = (0..<self.movies.count).randomElement() ?? 0

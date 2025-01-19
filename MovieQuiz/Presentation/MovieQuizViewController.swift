@@ -15,15 +15,20 @@ final class MovieQuizViewController: UIViewController {
   @IBOutlet private var imageView: UIImageView!
   @IBOutlet private var textLabel: UILabel!
   @IBOutlet private var counterLabel: UILabel!
-  @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+
+  var loadingView: LoadingView!
 
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
     questionFactory = QuestionFactory(
-      moviesLoader: MoviesLoader(), delegate: self)
+      moviesLoader: MoviesLoader(),
+      delegate: self
+    )
     alertPresenter = AlertPresenter(delegate: self)
     imageView.layer.masksToBounds = true
+
+    loadingView = LoadingView(parent: view)
     showLoadingIndicator()
   }
 
@@ -100,17 +105,16 @@ final class MovieQuizViewController: UIViewController {
     } else {
       currentQuestionIndex += 1
       questionFactory?.requestNextQuestion()
+      showLoadingIndicator()
     }
   }
 
   private func showLoadingIndicator() {
-    activityIndicator.isHidden = false
-    activityIndicator.startAnimating()
+    loadingView.show()
   }
 
   private func hideLoadingIndicator() {
-    activityIndicator.isHidden = true
-    activityIndicator.stopAnimating()
+    loadingView.hide()
   }
 
   private func showNetworkError(message: String) {
@@ -136,6 +140,7 @@ extension MovieQuizViewController: QuestionFactoryDelegate {
     DispatchQueue.main.async { [weak self] in
       self?.show(quiz: viewModel)
       self?.buttonsEnabled = true
+      self?.hideLoadingIndicator()
     }
   }
 
@@ -149,7 +154,7 @@ extension MovieQuizViewController: QuestionFactoryDelegate {
   }
 
   func didFailToLoadData(with error: Error) {
-
+    showNetworkError(message: error.localizedDescription)
   }
 }
 
