@@ -1,5 +1,5 @@
 import UIKit
 
-protocol AlertPresenterDelegate: UIViewController {
+protocol AlertPresenterDelegate: AnyObject {
   func didFinishPresentingAlert()
 }
